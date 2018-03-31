@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>chatterbox</title>
+    <link rel="stylesheet" href="styles/styles.css">
+
+    <!-- dependencies -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/underscore/underscore-min.js"></script>
+    <script src="/bower_components/xss-filters/dist/xss-filters.min.js"></script> 
+    <script src="/bower_components/moment/moment.js"></script> 
+
+
+    <script>
+      // YOU DO NOT NEED TO EDIT THIS CODE
+      if (!/(&|\?)username=/.test(window.location.search)) {
+        var newSearch = window.location.search;
+        if (newSearch !== '' & newSearch !== '?') {
+          newSearch += '&';
+        }
+        newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
+        window.location.search = newSearch;
+      }
+    </script>
+    <!-- your scripts -->
+    <script src="env/config.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/message.js"></script>
+  </head>
+  <body>
+    <div id="main">
+      <h1>chatterbox</h1>
+
+        Room: 
+        <select type="dropdown" label="Room: " id="roomSelect"></select>
+        New Room Name:
+        <input id="newRoom">
+        <br>
+        <br>
+        <input type="textarea" id="textMessage" placeholder="Messages are cool">
+        <button id="send" class="submit" type="submit">Submit</button>
+        <br>
+        <br>
+        <button id="clearMessages">Clear Messages</button>
+
+    </div>
+    <div id="chats"></div>
+  </body>
+  <script>
+    app.init();
+  </script>
+</html>
