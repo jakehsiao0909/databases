@@ -4,6 +4,7 @@
 var mysql = require('mysql');
 var request = require('request'); // You might need to npm install the request module!
 var expect = require('chai').expect;
+const moment = require('moment');
 
 describe('Persistent Node Chat Server', function() {
   var dbConnection;
@@ -33,16 +34,16 @@ describe('Persistent Node Chat Server', function() {
     request({
       method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/users',
-      json: { user: 'Valjean' }
+      json: { username: 'Valjean' }
     }, function () {
       // Post a message to the node chat server:
       request({
         method: 'POST',
         uri: 'http://127.0.0.1:3000/classes/messages',
         json: {
-          user: 'Valjean',
+          username: 'Valjean',
           text: 'In mercy\'s name, three days is all I need.',
-          room: 'Hello'
+          roomname: 'Hello'
         }
       }, function () {
         // Now if we look in the database, we should find the
@@ -68,12 +69,14 @@ describe('Persistent Node Chat Server', function() {
 
   it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-       var queryString = "";
+      const created_at = moment().format('YYYY-MM-DD HH:mm:ss');
+      const updated_at = moment().format('YYYY-MM-DD HH:mm:ss');
+       var queryString = `INSERT INTO messages (created_at, updated_at, text, user_id, room_id) 
+                          VALUES ('${created_at}', '${updated_at}', 'Men like you can never change!', '31', '5')`;
        var queryArgs = [];
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */
-
     dbConnection.query(queryString, queryArgs, function(err) {
       if (err) { throw err; }
 
@@ -81,8 +84,9 @@ describe('Persistent Node Chat Server', function() {
       // the message we just inserted:
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
         var messageLog = JSON.parse(body);
-        expect(messageLog[0].text).to.equal('Men like you can never change!');
-        expect(messageLog[0].room).to.equal('main');
+        var len = messageLog.length;
+        expect(messageLog[len - 1].text).to.equal('Men like you can never change!');
+        expect(messageLog[len - 1].roomname).to.equal('Hello');
         done();
       });
     });
